@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - flask-mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: student
+  app:
+    image: mori935/docker-lab5:main
+    ports:
+      - 80:80
+    logging:
+      driver: json-file
+
+  mysqlinit:
+    image: mysql:latest
+    command: bash -c "sleep 20 && mysql -h mysql -uroot -psecret CREATE DATABASE IF NOT EXIST student; USE student;CREATE TABLE IF NOT EXIST students (studentName VARCHAR(255), email VARCHAR(255), studentID INT NOT NULL AUTO_INCREMENT,PRIMARY KEY(studentID));INSERT INTO students (studentName, email) values (\"Aidan Dowling\", \"c20394933@mydomain.ie\"); INSERT INTO students (studentName, email) values (\"second student\", \"secondstudent@mydomain.ie\");SELECT * FROM students;exit; "
+volumes:
+  flask-mysql-data:
